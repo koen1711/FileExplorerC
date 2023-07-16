@@ -1,0 +1,6 @@
+[submodule "libs/sfml"]
+	path = libs/sfml
+	url = https://github.com/SFML/SFML.git
+[submodule "libs/raylib"]
+	path = libs/raylib
+	url = https://github.com/raysan5/raylib
