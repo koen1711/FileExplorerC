@@ -32,7 +32,7 @@ void App::logic(FileSystemView* fileSystemView) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 
         mousePos = GetMousePosition();
-        if (GetTime() - timeElapsed < 1 && click == 1) {
+        if (GetTime() - timeElapsed < 0.5 && click == 1) {
             std::cout << "DOUBLE CLICK" << std::endl;
             fileSystemView->handleLeftDoubleClick(mousePos);
             click = 0;

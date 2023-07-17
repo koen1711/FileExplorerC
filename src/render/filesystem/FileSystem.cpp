@@ -13,6 +13,7 @@
     #include <unistd.h>
 #endif
 
+
 FileSystem::FileSystem() {
 
 }
@@ -60,6 +61,5 @@ std::string FileSystem::getFileType(std::string path) {
 }
 
 void FileSystem::openFile(std::string path) {
-    std::cout << "explorer " << path << std::endl;
     system((std::string("explorer ") + path).c_str());
 }

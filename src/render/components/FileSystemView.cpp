@@ -1,8 +1,6 @@
-//
 #include "FileSystemView.h"
 #include <raylib.h>
 #include "../filesystem/FileSystem.h"
-#include <iostream>
 
 #define MAX_ENTRIES 25
 
@@ -15,7 +13,11 @@ FileSystemView::FileSystemView() {
 #endif
     this->files = this->fileSystem->getFiles(this->currentPath);
     this->fileView->setFiles(this->files);
-    this->fileView->setRectangle(Rectangle {0, 0, 800, 600});
+
+    float y = GetScreenHeight() * 0.1;
+    float width = GetScreenWidth();
+    float height = GetScreenHeight() * 0.9;
+    this->fileView->setRectangle(Rectangle {0, y, width, height});
 }
 
 FileSystemView::~FileSystemView() {
@@ -47,12 +49,12 @@ void FileSystemView::scroll(int ind) {
 void FileSystemView::handleLeftClick(Vector2 mousePos) {
     int x = mousePos.x;
     int y = mousePos.y;
-    int index = y / (GetScreenHeight() / MAX_ENTRIES);
-    if (index >= this->files.size()) {
+    int select = y / (GetScreenHeight() / MAX_ENTRIES);
+    select += this->index;
+    if (select >= this->files.size()) {
         return;
     }
-    std::cout << this->files[index].c_str() << std::endl;
-    this->fileView->setSelected(index);
+    this->fileView->setSelected(select);
 }
 
 void FileSystemView::handleRightClick(Vector2 mousePos) {

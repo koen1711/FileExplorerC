@@ -3,8 +3,9 @@
 //
 
 #include "FileView.h"
+#include <iostream>
 
-#define MAX_ENTRIES 20
+#define MAX_ENTRIES 25
 
 FileView::FileView() {
 
@@ -14,7 +15,7 @@ FileView::~FileView() {
 }
 
 void FileView::render() {
-    //BeginScissorMode(this->rectBound.x, this->rectBound.y, this->rectBound.width, this->rectBound.y);
+    BeginScissorMode(this->rectBound.x, this->rectBound.y, this->rectBound.width, this->rectBound.height);
     for (int i = this->index; i < this->index + MAX_ENTRIES; i++) {
         if (i >= this->files.size()) {
             continue;
@@ -37,7 +38,7 @@ void FileView::render() {
         }
         EndScissorMode();
     }
-    //EndScissorMode();
+    EndScissorMode();
 }
 
 void FileView::setFiles(std::vector<std::string> files) {
