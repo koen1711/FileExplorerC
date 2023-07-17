@@ -6,6 +6,7 @@
 #define FILEEXPLORERC_FILESYSTEMVIEW_H
 #include <string>
 #include "../filesystem/FileSystem.h"
+#include "fileview/FileView.h"
 #include <raylib.h>
 
 using namespace std;
@@ -16,10 +17,8 @@ private:
     string currentPath;
     std::vector<std::string> files;
     int index = 0;
-    int selected = -1;
 
-    Texture folder = LoadTexture(this->fileSystem->getFileIcon("Folder").c_str());
-    Texture file = LoadTexture(this->fileSystem->getFileIcon("File").c_str());
+    FileView* fileView = new FileView();
 public:
     FileSystemView();
     ~FileSystemView();
