@@ -1,6 +1,9 @@
 #include "FileSystem.h"
 #include <filesystem>
 #include "whereami.h"
+#include <vector>
+#include <string>
+#include <iostream>
 
 #ifdef _WIN32
     #include <Windows.h>
@@ -15,27 +18,26 @@ FileSystem::FileSystem() {
 }
 
 FileSystem::~FileSystem() {
-    delete this;
 }
 
 std::vector<std::string> FileSystem::getFiles(std::string path) {
     std::vector<std::string> files;
 
     for (const auto &entry: std::filesystem::directory_iterator(path)) {
-        files.push_back(entry.path());
+        files.push_back(entry.path().string());
     }
 
     return files;
 }
 
 
-std::string FileSystem::getFileIcon(std::string filePath) {
+std::string FileSystem::getFileIcon(std::string fileType) {
     std::string resourcePath = "";
     std::string iconPath = "/";
 
     // check if the file is a directory
 
-    if (std::filesystem::is_directory(filePath)) {
+    if (fileType == "Folder") {
         iconPath += "resources/icons/folder.png";
     } else {
         iconPath += "resources/icons/file.png";
@@ -51,4 +53,12 @@ std::string FileSystem::getFileIcon(std::string filePath) {
 
 
     return pathString + iconPath;
+}
+
+std::string FileSystem::getFileType(std::string path) {
+    std::cout << path << std::endl;
+    if (std::filesystem::is_directory(path)) {
+        return "Folder";
+    }
+    return "File";
 }
