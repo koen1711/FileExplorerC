@@ -12,10 +12,14 @@ using namespace std;
 
 class FileSystemView {
 private:
-    FileSystem* fileSystem;
+    FileSystem* fileSystem = new FileSystem();
     string currentPath;
     std::vector<std::string> files;
     int index = 0;
+    int selected = -1;
+
+    Texture folder = LoadTexture(this->fileSystem->getFileIcon("Folder").c_str());
+    Texture file = LoadTexture(this->fileSystem->getFileIcon("File").c_str());
 public:
     FileSystemView();
     ~FileSystemView();
@@ -26,6 +30,7 @@ public:
 
     void handleLeftClick(Vector2 mousePos);
     void handleRightClick(Vector2 mousePos);
+    void handleLeftDoubleClick(Vector2 mousePos);
 };
 
 

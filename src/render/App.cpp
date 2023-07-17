@@ -2,13 +2,18 @@
 #include "components/FileSystemView.h"
 #include <raylib.h>
 #include <thread>
+#include <iostream>
+#include <GLFW/glfw3.h>
 
-using namespace std;
+#define TARGET_FPS 10
 
 App::App() {
     this->currentPath = "";
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetTraceLogLevel(LOG_ERROR | LOG_TRACE);
     InitWindow(800, 600, "FileExplorer");
+
+    SetTargetFPS(TARGET_FPS);
     this->fileSystemView = new FileSystemView();
 }
 
@@ -16,46 +21,65 @@ App::~App() {
 
 }
 
-void App::run() {
-    fileSystemView->render();
+Vector2 mousePos;
+double timeElapsed = 0;
+int click = 0;
+char key;
+int scroll;
 
-    Vector2 mousePos;
+void App::logic(FileSystemView* fileSystemView) {
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+
+        mousePos = GetMousePosition();
+        if (GetTime() - timeElapsed < 1 && click == 1) {
+            std::cout << "DOUBLE CLICK" << std::endl;
+            fileSystemView->handleLeftDoubleClick(mousePos);
+            click = 0;
+            timeElapsed = 0;
+        } else {
+            if (click > 0) {
+                click = 0;
+                timeElapsed = 0;
+            }
+            fileSystemView->handleLeftClick(mousePos);
+            click += 1;
+            timeElapsed = GetTime();
+        }
+    } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+        mousePos = GetMousePosition();
+        fileSystemView->handleRightClick(mousePos);
+    }
+
+
+    if (IsKeyPressed(72)) {
+        fileSystemView->scroll(-1);
+    } else if (IsKeyPressed(80)) {
+        fileSystemView->scroll(1);
+    }
+
+
+
+    scroll = GetMouseWheelMove();
+    if (scroll != 0) {
+        fileSystemView->scroll(scroll * -1);
+    }
+}
+
+void App::run() {
+
+    fileSystemView->render();
+    bool firstRun = true;
     while (!WindowShouldClose())
     {
-        // check for mouse click
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            mousePos = GetMousePosition();
-            this->fileSystemView->handleLeftClick(mousePos);
-        } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-            mousePos = GetMousePosition();
-            this->fileSystemView->handleRightClick(mousePos);
-        }
-        char key = GetCharPressed();
-        if (key != 0) {
-            // check for arrowup
-            if (key == 72) {
-                this->fileSystemView->scroll(-1);
-            } else if (key == 80) {
-                this->fileSystemView->scroll(1);
-            }
-            else {
-
-            }
-
-        }
-        // check for scroll event
-        int scroll = GetMouseWheelMove();
-        if (scroll != 0) {
-            this->fileSystemView->scroll(scroll * -1);
-        }
-        // check for resize event
-        if (IsWindowResized()) {
-            this->fileSystemView->render();
-        }
+        this->logic(fileSystemView);
         BeginDrawing();
+            ClearBackground(DARKGRAY);
+            this->fileSystemView->render();
         EndDrawing();
     }
     delete this->fileSystemView;
+
     CloseWindow();
 
 }

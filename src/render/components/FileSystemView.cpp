@@ -1,44 +1,60 @@
 //
-// Created by koen on 7/15/23.
-//
-
 #include "FileSystemView.h"
 #include <raylib.h>
 #include "../filesystem/FileSystem.h"
 #include <iostream>
 
-#define MAX_ENTRIES 25
+#define MAX_ENTRIES 20
 
 FileSystemView::FileSystemView() {
-    this->currentPath = getenv("HOME");
-    this->fileSystem = new FileSystem();
+#ifdef __linux__
+    this->currentPath getenv("HOME");
+#else
+    this->currentPath = std::string(getenv("TEMP"));
+    this->currentPath = this->currentPath.substr(0, this->currentPath.length() - 18);
+#endif
     this->files = this->fileSystem->getFiles(this->currentPath);
 }
 
 FileSystemView::~FileSystemView() {
     delete this->fileSystem;
-    ClearBackground(RAYWHITE);
 }
 
 void FileSystemView::updatePath(string path) {
     this->currentPath = path;
     this->files = this->fileSystem->getFiles(path);
+    this->selected = -1;
 }
 
 void FileSystemView::render() {
-    BeginDrawing();
-    ClearBackground({ 89, 89, 89, 255 });
+
     for (int i = this->index; i < this->index + MAX_ENTRIES; i++) {
         if (i >= this->files.size()) {
             continue;
         }
         DrawText(this->files[i].c_str(), 50, (i - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, 20, WHITE);
-        DrawTexture(LoadTexture(this->fileSystem->getFileIcon(this->files[i]).c_str()), 0, (i - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+        if (this->fileSystem->getFileType(this->files[i]) == "Folder") {
+            DrawTexture(this->folder, 0, (i - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+        } else {
+            DrawTexture(this->file, 0, (i - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+        }
     }
-    EndDrawing();
+    if (this->selected != -1) {
+        BeginScissorMode(0, (this->selected - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, GetScreenWidth(), (GetScreenHeight() / MAX_ENTRIES));
+            DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), LIGHTGRAY);
+            DrawText(this->files[this->selected].c_str(), 50, (this->selected - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, 20, WHITE);
+            if (this->fileSystem->getFileType(this->files[this->selected]) == "Folder") {
+                DrawTexture(this->folder, 0, (this->selected - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+            } else {
+                DrawTexture(this->file, 0, (this->selected - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+            }
+        EndScissorMode();
+    }
 }
 
+
 void FileSystemView::scroll(int ind) {
+
     if (this->index + ind < 0) {
         this->index = this->files.size() - 1;
     } else if (this->index + ind >= this->files.size()) {
@@ -46,7 +62,6 @@ void FileSystemView::scroll(int ind) {
     } else {
         this->index += ind;
     }
-    this->render();
 }
 
 void FileSystemView::handleLeftClick(Vector2 mousePos) {
@@ -56,7 +71,8 @@ void FileSystemView::handleLeftClick(Vector2 mousePos) {
     if (index >= this->files.size()) {
         return;
     }
-    std::cout << this->files[index] << std::endl;
+    std::cout << this->files[index].c_str() << std::endl;
+    this->selected = index;
 }
 
 void FileSystemView::handleRightClick(Vector2 mousePos) {
@@ -66,5 +82,16 @@ void FileSystemView::handleRightClick(Vector2 mousePos) {
     if (index >= this->files.size()) {
         return;
     }
-    std::cout << this->files[index] << std::endl;
+}
+
+void FileSystemView::handleLeftDoubleClick(Vector2 mousePos) {
+    int y = mousePos.y;
+    int index = y / (GetScreenHeight() / MAX_ENTRIES);
+    if (index >= this->files.size()) {
+        return;
+    }
+    if (this->fileSystem->getFileType(this->files[index]) == std::string("File"))
+        this->fileSystem->openFile(this->files[index]);
+    else
+        this->updatePath(this->files[index]);
 }

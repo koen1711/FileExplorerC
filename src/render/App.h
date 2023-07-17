@@ -19,6 +19,7 @@ class App {
         ~App();
 
         void run();
+        static void logic(FileSystemView* fileSystemView);
         void openFile();
         void openFolder();
 

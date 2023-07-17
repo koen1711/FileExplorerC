@@ -15,7 +15,8 @@ class FileSystem {
 
         std::vector<std::string> getFiles(std::string path);
         std::string getFileIcon(std::string path);
-        void openFile();
+        std::string getFileType(std::string path);
+        void openFile(std::string path);
         void openFolder();
 
 };

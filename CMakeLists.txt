@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(
         libs/raylib/include
+        libs/raylib/src/external/glfw/include
 )
 
 add_subdirectory(libs/raylib)

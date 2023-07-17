@@ -35,8 +35,6 @@ std::string FileSystem::getFileIcon(std::string fileType) {
     std::string resourcePath = "";
     std::string iconPath = "/";
 
-    // check if the file is a directory
-
     if (fileType == "Folder") {
         iconPath += "resources/icons/folder.png";
     } else {
@@ -47,7 +45,6 @@ std::string FileSystem::getFileIcon(std::string fileType) {
     int length = wai_getExecutablePath(NULL, 0, NULL);
     char* path = new char[length];
     wai_getExecutablePath(path, length, NULL);
-    // replace the last /FILE
     std::string pathString = std::string(path);
     pathString = pathString.substr(0, pathString.find_last_of("/\\"));
 
@@ -56,9 +53,13 @@ std::string FileSystem::getFileIcon(std::string fileType) {
 }
 
 std::string FileSystem::getFileType(std::string path) {
-    std::cout << path << std::endl;
     if (std::filesystem::is_directory(path)) {
         return "Folder";
     }
     return "File";
+}
+
+void FileSystem::openFile(std::string path) {
+    std::cout << "explorer " << path << std::endl;
+    system((std::string("explorer ") + path).c_str());
 }
