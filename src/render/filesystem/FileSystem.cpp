@@ -21,19 +21,27 @@ FileSystem::FileSystem() {
 FileSystem::~FileSystem() {
 }
 
-std::vector<std::string> FileSystem::getFiles(std::string path) {
+std::vector<std::string> FileSystem::getFiles(const std::string& path) {
     std::vector<std::string> files;
 
-    for (const auto &entry: std::filesystem::directory_iterator(path)) {
-        files.push_back(entry.path().string());
+
+    try {
+        for (const auto &entry: std::filesystem::directory_iterator(path,
+                                                                    std::filesystem::directory_options::skip_permission_denied |
+                                                                    std::filesystem::directory_options::follow_directory_symlink)) {
+            files.push_back(entry.path().string());
+        }
+    } catch(std::filesystem::filesystem_error e) {
+        files.emplace_back("Error: This directory seems to have given an error at runtime, maybe it is protected?");
+        return files;
     }
 
     return files;
 }
 
 
-std::string FileSystem::getFileIcon(std::string fileType) {
-    std::string resourcePath = "";
+std::string FileSystem::getFileIcon(const std::string& fileType) {
+    std::string resourcePath;
     std::string iconPath = "/";
 
     if (fileType == "Folder") {
@@ -53,13 +61,22 @@ std::string FileSystem::getFileIcon(std::string fileType) {
     return pathString + iconPath;
 }
 
-std::string FileSystem::getFileType(std::string path) {
+/// Get the file type, given a std::string that's a valid path
+std::string FileSystem::getFileType(const std::string& path) {
+    if (reinterpret_cast<const char *>(path[6]) == "Error:") {
+        return "File";
+    }
     if (std::filesystem::is_directory(path)) {
         return "Folder";
     }
     return "File";
 }
 
-void FileSystem::openFile(std::string path) {
-    system((std::string("explorer ") + path).c_str());
+/// Open a file, given a std::string that's a valid path
+void FileSystem::openFile(const std::string& path) {
+    try {
+        system((std::string("explorer ") + path).c_str());
+    } catch(std::error_code) {
+       std::cout << "Can't open file, maybe it is protected?";
+    }
 }

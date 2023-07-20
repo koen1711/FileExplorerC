@@ -13,7 +13,7 @@
 class FileView {
     private:
         std::vector<std::string> files;
-        Rectangle rectBound;
+
         FileSystem* fileSystem = new FileSystem();
         int index = 0;
         int selected = -1;
@@ -29,6 +29,8 @@ class FileView {
         void setRectangle(Rectangle rect);
         void setIndex(int index);
         void setSelected(int selected);
+
+        Rectangle rectBound;
 };
 
 

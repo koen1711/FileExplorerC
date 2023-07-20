@@ -4,7 +4,7 @@
 
 #include "FileView.h"
 
-#define MAX_ENTRIES 25
+#define MIN_SIZE 30
 
 FileView::FileView() {
 
@@ -15,25 +15,26 @@ FileView::~FileView() {
 
 void FileView::render() {
     BeginScissorMode(this->rectBound.x, this->rectBound.y, this->rectBound.width, this->rectBound.height);
-    for (int i = this->index; i < this->index + MAX_ENTRIES; i++) {
+    const int amount = this->rectBound.height / MIN_SIZE;
+    for (int i = this->index; i < this->index + amount; i++) {
         if (i >= this->files.size()) {
             continue;
         }
-        DrawText(this->files[i].c_str(), 50, (i - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, 20, WHITE);
+        DrawText(this->files[i].c_str(), 50, (i - this->index) * (GetScreenHeight() / amount) + this->rectBound.y, 20, WHITE);
         if (this->fileSystem->getFileType(this->files[i]) == "Folder") {
-            DrawTexture(this->folder, 0, (i - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+            DrawTexture(this->folder, 0, (i - this->index) * (GetScreenHeight() / amount) + this->rectBound.y, WHITE);
         } else {
-            DrawTexture(this->file, 0, (i - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+            DrawTexture(this->file, 0, (i - this->index) * (GetScreenHeight() / amount) + this->rectBound.y, WHITE);
         }
     }
     if (this->selected != -1) {
-        BeginScissorMode(0, (this->selected - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, GetScreenWidth(), (GetScreenHeight() / MAX_ENTRIES));
+        BeginScissorMode(0, (this->selected - this->index) * (GetScreenHeight() / amount) + this->rectBound.y, GetScreenWidth(), (GetScreenHeight() / amount));
         ClearBackground(LIGHTGRAY);
-        DrawText(this->files[this->selected].c_str(), 50, (this->selected - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, 20, WHITE);
+        DrawText(this->files[this->selected].c_str(), 50, (this->selected - this->index) * (GetScreenHeight() / amount) + this->rectBound.y, 20, WHITE);
         if (this->fileSystem->getFileType(this->files[this->selected]) == "Folder") {
-            DrawTexture(this->folder, 0, (this->selected - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+            DrawTexture(this->folder, 0, (this->selected - this->index) * (GetScreenHeight() / amount) + this->rectBound.y, WHITE);
         } else {
-            DrawTexture(this->file, 0, (this->selected - this->index) * (GetScreenHeight() / MAX_ENTRIES) + 10, WHITE);
+            DrawTexture(this->file, 0, (this->selected - this->index) * (GetScreenHeight() / amount) + this->rectBound.y, WHITE);
         }
         EndScissorMode();
     }

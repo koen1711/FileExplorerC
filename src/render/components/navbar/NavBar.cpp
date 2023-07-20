@@ -1,15 +1,14 @@
 #include <iostream>
+#include <utility>
 #include "NavBar.h"
 
-NavBar::NavBar(Rectangle rectBound, std::string path, CallBack cb) : callBack(cb) {
+NavBar::NavBar(Rectangle rectBound, const std::string& path, CallBack cb) : callBack(std::move(cb)), rectBound(rectBound) {
     this->rectBound = rectBound;
     this->paths = new std::vector<std::string>;
     this->updatePath(path);
 }
 
-NavBar::~NavBar() {
-
-}
+NavBar::~NavBar() = default;
 
 void NavBar::render() {
     BeginScissorMode(this->rectBound.x, this->rectBound.y, this->rectBound.width, this->rectBound.height);
@@ -23,7 +22,7 @@ void NavBar::render() {
     EndScissorMode();
 }
 
-void NavBar::updatePath(std::string path) {
+void NavBar::updatePath(const std::string& path) {
     if (currentIndex != this->paths->size()) {
         this->paths->erase(std::next(this->paths->begin(), currentIndex), std::next(this->paths->begin(), this->paths->size()));
     }

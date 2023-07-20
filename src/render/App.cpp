@@ -23,7 +23,7 @@ Vector2 mousePos;
 double timeElapsed = 0;
 int click = 0;
 char key;
-int scroll;
+float scroll;
 
 void App::logic(FileSystemView* fileSystemView) {
 

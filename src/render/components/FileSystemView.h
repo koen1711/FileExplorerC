@@ -25,15 +25,15 @@ public:
     FileSystemView();
     ~FileSystemView();
 
-    void updatePath(string path);
+    void updatePath(const string& path);
     void render();
-    void scroll(int ind);
+    void scroll(float ind);
 
     void handleLeftClick(Vector2 mousePos);
     void handleRightClick(Vector2 mousePos);
     void handleLeftDoubleClick(Vector2 mousePos);
 
-    void navBarInteraction(string path);
+    void navBarInteraction(const string& path);
 };
 
 

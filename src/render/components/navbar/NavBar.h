@@ -11,7 +11,7 @@
 
 class NavBar {
     private:
-        Rectangle rectBound;
+        Rectangle rectBound{};
         std::vector<std::string>* paths = {};
         int currentIndex = 0;
         using CallBack = std::function<void(std::string)>;
@@ -19,11 +19,11 @@ class NavBar {
 
 
     public:
-        NavBar(Rectangle rectBound, std::string path, CallBack cb);
+        NavBar(Rectangle rectBound, const std::string& path, CallBack cb);
         ~NavBar();
 
         void render();
-        void updatePath(std::string path);
+        void updatePath(const std::string& path);
         void goBack();
         void goForward();
 

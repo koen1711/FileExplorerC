@@ -13,10 +13,10 @@ class FileSystem {
         FileSystem();
         ~FileSystem();
 
-        std::vector<std::string> getFiles(std::string path);
-        std::string getFileIcon(std::string path);
-        std::string getFileType(std::string path);
-        void openFile(std::string path);
+        static std::vector<std::string> getFiles(const std::string& path);
+        static std::string getFileIcon(const std::string& path);
+        static std::string getFileType(const std::string& path);
+        static void openFile(const std::string& path);
         void openFolder();
 
 };

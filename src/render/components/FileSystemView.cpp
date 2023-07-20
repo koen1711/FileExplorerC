@@ -1,9 +1,10 @@
 #include "FileSystemView.h"
 #include <raylib.h>
 #include <functional>
+#include <utility>
 #include "../filesystem/FileSystem.h"
 
-#define MAX_ENTRIES 25
+#define MIN_SIZE 30
 
 FileSystemView::FileSystemView() {
 #ifdef __linux__
@@ -15,7 +16,7 @@ FileSystemView::FileSystemView() {
     this->files = this->fileSystem->getFiles(this->currentPath);
     this->fileView->setFiles(this->files);
 
-    std::function<void(std::string)> cb = [this](std::string path) {
+    std::function<void(std::string)> cb = [this](const std::string& path) {
         this->navBarInteraction(path);
     };
 
@@ -28,13 +29,13 @@ FileSystemView::~FileSystemView() {
     delete this->fileSystem;
 }
 
-void FileSystemView::navBarInteraction(std::string path) {
+void FileSystemView::navBarInteraction(const std::string& path) {
     this->currentPath = path;
     this->files = this->fileSystem->getFiles(path);
     this->fileView->setFiles(this->files);
 }
 
-void FileSystemView::updatePath(string path) {
+void FileSystemView::updatePath(const std::string& path) {
     this->currentPath = path;
     this->navBar->updatePath(path);
     this->files = this->fileSystem->getFiles(path);
@@ -47,7 +48,7 @@ void FileSystemView::render() {
 }
 
 
-void FileSystemView::scroll(int ind) {
+void FileSystemView::scroll(float ind) {
     if (this->index + ind < 0) {
         this->index = this->files.size() - 1;
     } else if (this->index + ind >= this->files.size()) {
@@ -59,9 +60,9 @@ void FileSystemView::scroll(int ind) {
 }
 
 void FileSystemView::handleLeftClick(Vector2 mousePos) {
-    int x = mousePos.x;
     int y = mousePos.y;
-    int select = y / (GetScreenHeight() / MAX_ENTRIES);
+    const int amount = this->fileView->rectBound.height / MIN_SIZE;
+    int select = (y - this->fileView->rectBound.y) / (GetScreenHeight() / amount );
     select += this->index;
     if (select >= this->files.size()) {
         return;
@@ -70,9 +71,9 @@ void FileSystemView::handleLeftClick(Vector2 mousePos) {
 }
 
 void FileSystemView::handleRightClick(Vector2 mousePos) {
-    int x = mousePos.x;
     int y = mousePos.y;
-    int index = y / (GetScreenHeight() / MAX_ENTRIES);
+    const int amount = this->fileView->rectBound.height / MIN_SIZE;
+    int index = (y - this->fileView->rectBound.y) / (GetScreenHeight() / amount );
     if (index >= this->files.size()) {
         return;
     }
@@ -80,7 +81,8 @@ void FileSystemView::handleRightClick(Vector2 mousePos) {
 
 void FileSystemView::handleLeftDoubleClick(Vector2 mousePos) {
     int y = mousePos.y;
-    int index = y / (GetScreenHeight() / MAX_ENTRIES);
+    const int amount = this->fileView->rectBound.height / MIN_SIZE;
+    int index = (y - this->fileView->rectBound.y) / (GetScreenHeight() / amount );
     if (index >= this->files.size()) {
         return;
     }
