@@ -3,7 +3,6 @@
 //
 
 #include "FileView.h"
-#include <iostream>
 
 #define MAX_ENTRIES 25
 

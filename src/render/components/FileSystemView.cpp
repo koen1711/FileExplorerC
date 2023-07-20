@@ -1,5 +1,6 @@
 #include "FileSystemView.h"
 #include <raylib.h>
+#include <functional>
 #include "../filesystem/FileSystem.h"
 
 #define MAX_ENTRIES 25
@@ -14,24 +15,35 @@ FileSystemView::FileSystemView() {
     this->files = this->fileSystem->getFiles(this->currentPath);
     this->fileView->setFiles(this->files);
 
-    float y = GetScreenHeight() * 0.1;
+    std::function<void(std::string)> cb = [this](std::string path) {
+        this->navBarInteraction(path);
+    };
+
     float width = GetScreenWidth();
-    float height = GetScreenHeight() * 0.9;
-    this->fileView->setRectangle(Rectangle {0, y, width, height});
+    this->navBar = new NavBar(Rectangle {0, 0, width, (float)(GetScreenHeight() * 0.1)}, this->currentPath, cb);
+    this->fileView->setRectangle(Rectangle {0, (float)(GetScreenHeight() * 0.1), width, (float)(GetScreenHeight() * 0.9)});
 }
 
 FileSystemView::~FileSystemView() {
     delete this->fileSystem;
 }
 
+void FileSystemView::navBarInteraction(std::string path) {
+    this->currentPath = path;
+    this->files = this->fileSystem->getFiles(path);
+    this->fileView->setFiles(this->files);
+}
+
 void FileSystemView::updatePath(string path) {
     this->currentPath = path;
+    this->navBar->updatePath(path);
     this->files = this->fileSystem->getFiles(path);
     this->fileView->setFiles(this->files);
 }
 
 void FileSystemView::render() {
     this->fileView->render();
+    this->navBar->render();
 }
 
 

@@ -2,8 +2,6 @@
 #include "components/FileSystemView.h"
 #include <raylib.h>
 #include <thread>
-#include <iostream>
-#include <GLFW/glfw3.h>
 
 #define TARGET_FPS 10
 
@@ -33,7 +31,6 @@ void App::logic(FileSystemView* fileSystemView) {
 
         mousePos = GetMousePosition();
         if (GetTime() - timeElapsed < 0.5 && click == 1) {
-            std::cout << "DOUBLE CLICK" << std::endl;
             fileSystemView->handleLeftDoubleClick(mousePos);
             click = 0;
             timeElapsed = 0;

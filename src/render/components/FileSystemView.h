@@ -8,12 +8,14 @@
 #include "../filesystem/FileSystem.h"
 #include "fileview/FileView.h"
 #include <raylib.h>
+#include "navbar/NavBar.h"
 
 using namespace std;
 
 class FileSystemView {
 private:
     FileSystem* fileSystem = new FileSystem();
+    NavBar* navBar;
     string currentPath;
     std::vector<std::string> files;
     int index = 0;
@@ -30,6 +32,8 @@ public:
     void handleLeftClick(Vector2 mousePos);
     void handleRightClick(Vector2 mousePos);
     void handleLeftDoubleClick(Vector2 mousePos);
+
+    void navBarInteraction(string path);
 };
 
 
