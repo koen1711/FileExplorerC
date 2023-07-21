@@ -61,6 +61,10 @@ void App::logic(FileSystemView* fileSystemView) {
     if (scroll != 0) {
         fileSystemView->scroll(scroll * -1);
     }
+
+    if (IsWindowResized()) {
+        fileSystemView->resize();
+    }
 }
 
 void App::run() {
@@ -71,7 +75,7 @@ void App::run() {
     {
         this->logic(fileSystemView);
         BeginDrawing();
-            ClearBackground(DARKGRAY);
+
             this->fileSystemView->render();
         EndDrawing();
     }

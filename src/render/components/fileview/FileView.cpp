@@ -6,15 +6,19 @@
 
 #define MIN_SIZE 30
 
-FileView::FileView() {
+// CONSTRUCTOR DECONSTRUCTOR
+FileView::FileView(CallBack cb) : updatePathCallback(cb) {
 
 }
 
 FileView::~FileView() {
 }
 
+
+// RENDER
 void FileView::render() {
     BeginScissorMode(this->rectBound.x, this->rectBound.y, this->rectBound.width, this->rectBound.height);
+    ClearBackground(DARKGRAY);
     const int amount = this->rectBound.height / MIN_SIZE;
     for (int i = this->index; i < this->index + amount; i++) {
         if (i >= this->files.size()) {
@@ -41,6 +45,8 @@ void FileView::render() {
     EndScissorMode();
 }
 
+
+// UPDATES
 void FileView::setFiles(std::vector<std::string> files) {
     this->files = files;
     this->selected = -1;
@@ -57,4 +63,39 @@ void FileView::setIndex(int index) {
 
 void FileView::setSelected(int selected) {
     this->selected = selected;
+}
+
+
+// CALLBACKS
+void FileView::handleLeftClick(Vector2 mousePos) {
+    int y = mousePos.y;
+    const int amount = this->rectBound.height / MIN_SIZE;
+    int select = (y - this->rectBound.y) / (GetScreenHeight() / amount );
+    select += this->index;
+    if (select >= this->files.size()) {
+        return;
+    }
+    this->setSelected(select);
+}
+
+void FileView::handleRightClick(Vector2 mousePos) {
+    int y = mousePos.y;
+    const int amount = this->rectBound.height / MIN_SIZE;
+    int index = (y - this->rectBound.y) / (GetScreenHeight() / amount );
+    if (index >= this->files.size()) {
+        return;
+    }
+}
+
+void FileView::handleLeftDoubleClick(Vector2 mousePos) {
+    int y = mousePos.y;
+    const int amount = this->rectBound.height / MIN_SIZE;
+    int index = (y - this->rectBound.y) / (GetScreenHeight() / amount );
+    if (index >= this->files.size()) {
+        return;
+    }
+    if (this->fileSystem->getFileType(this->files[index]) == std::string("File"))
+        this->fileSystem->openFile(this->files[index]);
+    else
+        this->updatePathCallback(this->files[index]);
 }

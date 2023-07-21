@@ -20,20 +20,21 @@ private:
     std::vector<std::string> files;
     int index = 0;
 
-    FileView* fileView = new FileView();
+    FileView* fileView;
 public:
     FileSystemView();
     ~FileSystemView();
 
     void updatePath(const string& path);
     void render();
+    void resize();
     void scroll(float ind);
 
     void handleLeftClick(Vector2 mousePos);
     void handleRightClick(Vector2 mousePos);
     void handleLeftDoubleClick(Vector2 mousePos);
 
-    void navBarInteraction(const string& path);
+    void navBarInteraction(const string& path, const string& type);
 };
 
 

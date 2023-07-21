@@ -44,11 +44,19 @@ std::string FileSystem::getFileIcon(const std::string& fileType) {
     std::string resourcePath;
     std::string iconPath = "/";
 
-    if (fileType == "Folder") {
+    if (fileType == "Folder")
         iconPath += "resources/icons/folder.png";
-    } else {
+    else if (fileType == "Forward")
+        iconPath += "resources/icons/forwardTexture.png";
+    else if (fileType == "Backward")
+        iconPath += "resources/icons/texture.png";
+    else if (fileType == "ForwardI")
+        iconPath += "resources/icons/forwardi.png";
+    else if (fileType == "BackwardI")
+        iconPath += "resources/icons/backwardi.png";
+    else
         iconPath += "resources/icons/file.png";
-    }
+
 
     // get the path of the executable
     int length = wai_getExecutablePath(NULL, 0, NULL);

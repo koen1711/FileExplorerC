@@ -8,10 +8,13 @@
 #include <vector>
 #include <string>
 #include <raylib.h>
+#include <functional>
 #include "../../filesystem/FileSystem.h"
 
 class FileView {
     private:
+        using CallBack = std::function<void(std::string)>;
+
         std::vector<std::string> files;
 
         FileSystem* fileSystem = new FileSystem();
@@ -20,15 +23,25 @@ class FileView {
 
         Texture folder = LoadTexture(this->fileSystem->getFileIcon("Folder").c_str());
         Texture file = LoadTexture(this->fileSystem->getFileIcon("File").c_str());
+
+        CallBack updatePathCallback;
     public:
-        FileView();
+        FileView(CallBack cb);
         ~FileView();
 
+        // RENDER
         void render();
+
+        // UPDATES
         void setFiles(std::vector<std::string> files);
         void setRectangle(Rectangle rect);
         void setIndex(int index);
         void setSelected(int selected);
+
+        // EVENTS
+        void handleLeftClick(Vector2 mousePos);
+        void handleLeftDoubleClick(Vector2 mousePos);
+        void handleRightClick(Vector2 mousePos);
 
         Rectangle rectBound;
 };

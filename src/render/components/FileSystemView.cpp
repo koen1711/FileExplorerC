@@ -7,6 +7,18 @@
 #define MIN_SIZE 30
 
 FileSystemView::FileSystemView() {
+    std::function<void(std::string, std::string)> navBarInteractionCallback = [this](const std::string& path, const std::string& type) {
+        this->navBarInteraction(path, type);
+    };
+
+    std::function<void(std::string)> pathCallBack = [this](const std::string& path) {
+        this->updatePath(path);
+    };
+
+    float width = GetScreenWidth();
+
+    this->navBar = new NavBar(Rectangle {0, 0, width, (float)(GetScreenHeight() * 0.1)}, this->currentPath, navBarInteractionCallback);
+    this->fileView = new FileView(pathCallBack);
 #ifdef __linux__
     this->currentPath getenv("HOME");
 #else
@@ -15,13 +27,6 @@ FileSystemView::FileSystemView() {
 #endif
     this->files = this->fileSystem->getFiles(this->currentPath);
     this->fileView->setFiles(this->files);
-
-    std::function<void(std::string)> cb = [this](const std::string& path) {
-        this->navBarInteraction(path);
-    };
-
-    float width = GetScreenWidth();
-    this->navBar = new NavBar(Rectangle {0, 0, width, (float)(GetScreenHeight() * 0.1)}, this->currentPath, cb);
     this->fileView->setRectangle(Rectangle {0, (float)(GetScreenHeight() * 0.1), width, (float)(GetScreenHeight() * 0.9)});
 }
 
@@ -29,7 +34,7 @@ FileSystemView::~FileSystemView() {
     delete this->fileSystem;
 }
 
-void FileSystemView::navBarInteraction(const std::string& path) {
+void FileSystemView::navBarInteraction(const std::string& path, const std::string& type) {
     this->currentPath = path;
     this->files = this->fileSystem->getFiles(path);
     this->fileView->setFiles(this->files);
@@ -37,7 +42,7 @@ void FileSystemView::navBarInteraction(const std::string& path) {
 
 void FileSystemView::updatePath(const std::string& path) {
     this->currentPath = path;
-    this->navBar->updatePath(path);
+    this->navBar->setPath(path);
     this->files = this->fileSystem->getFiles(path);
     this->fileView->setFiles(this->files);
 }
@@ -47,6 +52,11 @@ void FileSystemView::render() {
     this->navBar->render();
 }
 
+void FileSystemView::resize() {
+    float width = GetScreenWidth();
+    this->navBar->setRect(Rectangle {0, 0, width, (float)(GetScreenHeight() * 0.1)});
+    this->fileView->setRectangle(Rectangle {0, (float)(GetScreenHeight() * 0.1), width, (float)(GetScreenHeight() * 0.9)});
+}
 
 void FileSystemView::scroll(float ind) {
     if (this->index + ind < 0) {
@@ -60,34 +70,22 @@ void FileSystemView::scroll(float ind) {
 }
 
 void FileSystemView::handleLeftClick(Vector2 mousePos) {
-    int y = mousePos.y;
-    const int amount = this->fileView->rectBound.height / MIN_SIZE;
-    int select = (y - this->fileView->rectBound.y) / (GetScreenHeight() / amount );
-    select += this->index;
-    if (select >= this->files.size()) {
-        return;
-    }
-    this->fileView->setSelected(select);
+    if (CheckCollisionPointRec(mousePos, this->navBar->rectBound))
+        this->navBar->handleLeftClick(mousePos);
+    else
+        this->fileView->handleLeftClick(mousePos);
 }
 
 void FileSystemView::handleRightClick(Vector2 mousePos) {
-    int y = mousePos.y;
-    const int amount = this->fileView->rectBound.height / MIN_SIZE;
-    int index = (y - this->fileView->rectBound.y) / (GetScreenHeight() / amount );
-    if (index >= this->files.size()) {
-        return;
-    }
+    if (CheckCollisionPointRec(mousePos, this->navBar->rectBound))
+        this->navBar->handleRightClick(mousePos);
+    else
+        this->fileView->handleRightClick(mousePos);
 }
 
 void FileSystemView::handleLeftDoubleClick(Vector2 mousePos) {
-    int y = mousePos.y;
-    const int amount = this->fileView->rectBound.height / MIN_SIZE;
-    int index = (y - this->fileView->rectBound.y) / (GetScreenHeight() / amount );
-    if (index >= this->files.size()) {
-        return;
-    }
-    if (this->fileSystem->getFileType(this->files[index]) == std::string("File"))
-        this->fileSystem->openFile(this->files[index]);
+    if (CheckCollisionPointRec(mousePos, this->navBar->rectBound))
+        this->navBar->handleLeftDoubleClick(mousePos);
     else
-        this->updatePath(this->files[index]);
+        this->fileView->handleLeftDoubleClick(mousePos);
 }
