@@ -15,6 +15,6 @@ add_custom_target(
 
 )
 
-add_executable(FileExplorerC src/main.cpp src/render/filesystem/FileSystem.cpp src/render/filesystem/FileSystem.h src/render/App.cpp src/render/components/FileSystemView.cpp src/render/components/FileSystemView.h src/render/filesystem/whereami.c src/render/components/navbar/NavBar.cpp src/render/components/navbar/NavBar.h src/render/components/fileview/FileView.cpp src/render/components/fileview/FileView.h)
+add_executable(FileExplorerC src/main.cpp src/render/filesystem/FileSystem.cpp src/render/filesystem/FileSystem.h src/render/App.cpp src/render/components/FileSystemView.cpp src/render/components/FileSystemView.h src/render/filesystem/whereami.c src/render/components/navbar/NavBar.cpp src/render/components/navbar/NavBar.h src/render/components/fileview/FileView.cpp src/render/components/fileview/FileView.h src/render/components/navbar/pathview/PathView.cpp src/render/components/navbar/pathview/PathView.h)
 target_link_libraries(FileExplorerC raylib)
 add_dependencies(FileExplorerC copy_resources)

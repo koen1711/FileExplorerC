@@ -42,6 +42,7 @@ class FileView {
         void handleLeftClick(Vector2 mousePos);
         void handleLeftDoubleClick(Vector2 mousePos);
         void handleRightClick(Vector2 mousePos);
+        void handleKeyInput(char key);
 
         Rectangle rectBound;
 };

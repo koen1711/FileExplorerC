@@ -15,6 +15,7 @@ NavBar::~NavBar() = default;
 void NavBar::render() {
     BeginScissorMode(this->rectBound.x, this->rectBound.y, this->rectBound.width, this->rectBound.height);
         ClearBackground((Color){ 90, 90, 90, 255 });
+        this->pathView->render();
         float texturesize = 30 * this->buttonScale;
         float ycenter = (this->rectBound.height / 2) - (texturesize / 2);
 
@@ -43,6 +44,7 @@ void NavBar::goForward() {
     this->canGoBackward = true;
     this->currentIndex += 1;
     this->callBack(this->paths->at(this->currentIndex), "Forward");
+    this->pathView->setPath(this->paths->at(this->currentIndex));
     if (this->currentIndex == this->paths->size() - 1)
         this->canGoForward = false;
     else
@@ -55,6 +57,7 @@ void NavBar::goBack() {
     this->canGoForward = true;
     this->currentIndex -= 1;
     this->callBack(this->paths->at(this->currentIndex), "Backward");
+    this->pathView->setPath(this->paths->at(this->currentIndex));
     if (this->currentIndex == 0)
         this->canGoBackward = false;
     else
@@ -70,9 +73,11 @@ void NavBar::setRect(Rectangle rect) {
     float ycenter = (this->rectBound.height / 2) - (texturesize / 2);
     this->backwardRect = Rectangle {(float)(this->buttonScale * 30), ycenter, (float)this->buttonScale * 30, (float)this->buttonScale * 30};
     this->forwardRect = Rectangle {(float)(this->buttonScale * 30 + this->buttonScale * 30), ycenter, (float)this->buttonScale * 30, (float)this->buttonScale * 30};
+    this->pathView->setRect(Rectangle{this->rectBound.width / 8, ycenter, (float)(this->rectBound.width * 0.75), (float)this->buttonScale * 30 });
 }
 
 void NavBar::setPath(std::string path) {
+    this->pathView->setPath(path);
     if (currentIndex != this->paths->size() - 1 and this->paths->size() != 0) {
         this->paths->erase(std::next(this->paths->begin(), currentIndex), std::next(this->paths->begin(), this->paths->size()));
     }
@@ -100,4 +105,8 @@ void NavBar::handleRightClick(Vector2 mousePos) {
 
 void NavBar::handleLeftDoubleClick(Vector2 mousePos) {
     // TODO: HANDLE LEFT DOUBLE CLICKS ON NAVBAR
+}
+
+void NavBar::handleKeyInput(char key) {
+
 }

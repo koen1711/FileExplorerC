@@ -57,14 +57,14 @@ void FileSystemView::resize() {
 }
 
 void FileSystemView::scroll(float ind) {
-    if (this->index + ind < 0) {
-        this->index = this->files.size() - 1;
-    } else if (this->index + ind >= this->files.size()) {
+    if (this->index + ind >= this->files.size())
+        this->index = this->files.size();
+    else if (this->index + ind < 0)
         this->index = 0;
-    } else {
+    else
         this->index += ind;
-    }
-    this->fileView->setIndex(index);
+
+    this->fileView->setIndex(this->index);
 }
 
 void FileSystemView::handleLeftClick(Vector2 mousePos) {

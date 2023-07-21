@@ -9,6 +9,7 @@
 #include <vector>
 #include <functional>
 #include "../../filesystem/FileSystem.h"
+#include "pathview/PathView.h"
 
 class NavBar {
     private:
@@ -23,6 +24,7 @@ class NavBar {
         using CallBack = std::function<void(std::string, std::string)>;
         CallBack callBack;
         FileSystem* fileSystem = new FileSystem();
+        PathView* pathView = new PathView();
 
         Texture forwardTexture = LoadTexture(this->fileSystem->getFileIcon("Forward").c_str());
         Texture backwardTexture = LoadTexture(this->fileSystem->getFileIcon("Backward").c_str());
@@ -43,10 +45,11 @@ class NavBar {
         void setPath(std::string path);
         void setRect(Rectangle rect);
 
-        // CALLBACKS
+        // EVENTS
         void handleLeftClick(Vector2 mousePos);
         void handleRightClick(Vector2 mousePos);
         void handleLeftDoubleClick(Vector2 mousePos);
+        void handleKeyInput(char key);
 
         Rectangle rectBound{};
 };
