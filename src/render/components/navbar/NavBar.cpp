@@ -4,10 +4,9 @@
 #include <cmath>
 
 // CONSTRUCTORS AND DECONSTRUCTORS
-NavBar::NavBar(Rectangle rectBound, const std::string& path, CallBack cb) : callBack(std::move(cb)), rectBound(rectBound) {
+NavBar::NavBar(Rectangle rectBound, CallBack cb) : callBack(std::move(cb)), rectBound(rectBound) {
     this->setRect(rectBound);
     this->paths = new std::vector<std::string>;
-    this->setPath(path);
 }
 
 NavBar::~NavBar() = default;
@@ -20,17 +19,17 @@ void NavBar::render() {
         float ycenter = (this->rectBound.height / 2) - (texturesize / 2);
 
         // Backward logic
-        if (this->currentIndex != 0) {
-            DrawTextureEx(this->backwardTexture, Vector2{(float)(this->buttonScale * 30), ycenter}, 0, this->buttonScale, BLACK);
+        if (this->canGoBackward) {
+            DrawTextureEx(this->backwardTexture, Vector2{this->backwardRect.x, this->backwardRect.y}, 0, this->buttonScale, BLACK);
         } else {
-            DrawTextureEx(this->backwardTexturei, Vector2{(float)(this->buttonScale * 30), ycenter}, 0, this->buttonScale, RED);
+            DrawTextureEx(this->backwardTexturei, Vector2{this->backwardRect.x, this->backwardRect.y}, 0, this->buttonScale, RED);
         }
 
         // Forward logic
-        if (this->currentIndex != this->paths->size() - 1) {
-            DrawTextureEx(this->forwardTexture, Vector2{(float)(this->buttonScale * 30 + this->buttonScale * 30), ycenter}, 0, this->buttonScale, LIGHTGRAY);
+        if (this->canGoForward) {
+            DrawTextureEx(this->forwardTexture, Vector2{this->forwardRect.x, this->forwardRect.y}, 0, this->buttonScale, BLACK);
         } else {
-            DrawTextureEx(this->forwardTexturei, Vector2{(float)(this->buttonScale * 30 + this->buttonScale * 30), ycenter}, 0, this->buttonScale, LIGHTGRAY);
+            DrawTextureEx(this->forwardTexturei, Vector2{this->forwardRect.x, this->forwardRect.y}, 0, this->buttonScale, RED);
         }
     EndScissorMode();
 }
@@ -53,7 +52,7 @@ void NavBar::goBack() {
     if (this->currentIndex == 0)
         return;
     this->canGoForward = true;
-    this->currentIndex = this->currentIndex - 1;
+    this->currentIndex -= 1;
     this->callBack(this->paths->at(this->currentIndex), "Backward");
     if (this->currentIndex == 0)
         this->canGoBackward = false;
@@ -65,15 +64,18 @@ void NavBar::goBack() {
 // UPDATES
 void NavBar::setRect(Rectangle rect) {
     this->rectBound = rect;
-    std::cout << this->rectBound.height;
     this->buttonScale = (this->rectBound.height * 0.5) / 30;
-    std::cout << this->buttonScale;
+    float texturesize = 30 * this->buttonScale;
+    float ycenter = (this->rectBound.height / 2) - (texturesize / 2);
+    this->backwardRect = Rectangle {(float)(this->buttonScale * 30), ycenter, (float)this->buttonScale * 30, (float)this->buttonScale * 30};
+    this->forwardRect = Rectangle {(float)(this->buttonScale * 30 + this->buttonScale * 30), ycenter, (float)this->buttonScale * 30, (float)this->buttonScale * 30};
 }
 
-void NavBar::setPath(const std::string& path) {
-    if (currentIndex != this->paths->size() - 1) {
+void NavBar::setPath(std::string path) {
+    if (currentIndex != this->paths->size() - 1 and this->paths->size() != 0) {
         this->paths->erase(std::next(this->paths->begin(), currentIndex), std::next(this->paths->begin(), this->paths->size()));
     }
+
     this->paths->push_back(path);
     this->currentIndex = this->paths->size() - 1;
     this->canGoForward = false;
@@ -85,7 +87,8 @@ void NavBar::setPath(const std::string& path) {
 
 // CALLBACKS
 void NavBar::handleLeftClick(Vector2 mousePos) {
-    // TODO: HANDLE LEFT CLICKS ON NAVBAR
+    if (CheckCollisionPointRec(mousePos, this->backwardRect))
+        this->goBack();
 }
 
 void NavBar::handleRightClick(Vector2 mousePos) {

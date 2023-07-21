@@ -7,12 +7,9 @@
 #define MIN_SIZE 30
 
 // CONSTRUCTOR DECONSTRUCTOR
-FileView::FileView(CallBack cb) : updatePathCallback(cb) {
+FileView::FileView(CallBack cb) : updatePathCallback(cb) {}
 
-}
-
-FileView::~FileView() {
-}
+FileView::~FileView() = default;
 
 
 // RENDER

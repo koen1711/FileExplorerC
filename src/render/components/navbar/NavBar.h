@@ -30,14 +30,17 @@ class NavBar {
         Texture backwardTexturei = LoadTexture(this->fileSystem->getFileIcon("BackwardI").c_str());
 
         double buttonScale;
+
+        Rectangle forwardRect;
+        Rectangle backwardRect;
     public:
-        NavBar(Rectangle rectBound, const std::string& path, CallBack cb);
+        NavBar(Rectangle rectBound, CallBack cb);
         ~NavBar();
 
         void render();
 
         // UPDATES
-        void setPath(const std::string& path);
+        void setPath(std::string path);
         void setRect(Rectangle rect);
 
         // CALLBACKS

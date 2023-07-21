@@ -3,8 +3,7 @@
 #include <functional>
 #include <utility>
 #include "../filesystem/FileSystem.h"
-
-#define MIN_SIZE 30
+#include <iostream>
 
 FileSystemView::FileSystemView() {
     std::function<void(std::string, std::string)> navBarInteractionCallback = [this](const std::string& path, const std::string& type) {
@@ -17,16 +16,15 @@ FileSystemView::FileSystemView() {
 
     float width = GetScreenWidth();
 
-    this->navBar = new NavBar(Rectangle {0, 0, width, (float)(GetScreenHeight() * 0.1)}, this->currentPath, navBarInteractionCallback);
+    this->navBar = new NavBar(Rectangle {0, 0, width, (float)(GetScreenHeight() * 0.1)}, navBarInteractionCallback);
     this->fileView = new FileView(pathCallBack);
 #ifdef __linux__
     this->currentPath getenv("HOME");
 #else
     this->currentPath = std::string(getenv("TEMP"));
     this->currentPath = this->currentPath.substr(0, this->currentPath.length() - 18);
+    this->updatePath(this->currentPath);
 #endif
-    this->files = this->fileSystem->getFiles(this->currentPath);
-    this->fileView->setFiles(this->files);
     this->fileView->setRectangle(Rectangle {0, (float)(GetScreenHeight() * 0.1), width, (float)(GetScreenHeight() * 0.9)});
 }
 
