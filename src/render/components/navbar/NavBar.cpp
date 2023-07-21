@@ -37,12 +37,13 @@ void NavBar::render() {
 
 // EVENTS
 void NavBar::goForward() {
-    if (this->currentIndex != this->paths->size() - 1)
+    if (this->currentIndex == this->paths->size() - 1)
         return;
+
     this->canGoBackward = true;
     this->currentIndex += 1;
     this->callBack(this->paths->at(this->currentIndex), "Forward");
-    if (this->currentIndex != this->paths->size() - 1)
+    if (this->currentIndex == this->paths->size() - 1)
         this->canGoForward = false;
     else
         this->canGoForward = true;
@@ -89,6 +90,8 @@ void NavBar::setPath(std::string path) {
 void NavBar::handleLeftClick(Vector2 mousePos) {
     if (CheckCollisionPointRec(mousePos, this->backwardRect))
         this->goBack();
+    else if (CheckCollisionPointRec(mousePos, this->forwardRect))
+        this->goForward();
 }
 
 void NavBar::handleRightClick(Vector2 mousePos) {
