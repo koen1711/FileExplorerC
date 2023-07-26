@@ -1,0 +1,9 @@
+[submodule "libs/sockcpp"]
+	path = libs/sockcpp
+	url = https://github.com/fpagliughi/sockpp
+[submodule "libs/efsw"]
+	path = libs/efsw
+	url = https://github.com/SpartanJ/efsw.git
+[submodule "libs/RapidFuzz"]
+	path = libs/RapidFuzz
+	url = https://github.com/maxbachmann/rapidfuzz-cpp.git
