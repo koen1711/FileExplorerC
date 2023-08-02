@@ -11,11 +11,11 @@ FindFiles::FindFiles(std::function<void(std::string)> refreshCallback) {
 
 }
 
-std::map<int, std::string> FindFiles::findFiles(std::map<std::string, std::string> searchParameters) {
+std::map<int, std::string> FindFiles::findFiles(std::map<std::string, std::string> searchParameters, std::string startingPoint) {
     Search* search = new Search(searchParameters);
 
     std::vector<std::string>* files = new std::vector<std::string>{};
-    this->getFilesInDirectory(this->startingPoint, files, search);
+    this->getFilesInDirectory(startingPoint, files, search);
 
     return std::map<int, std::string>{};
 }

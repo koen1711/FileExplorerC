@@ -18,6 +18,17 @@ try:
 except socket.error as e:
     print("Error: ", e)
 
-finally:
-    # Close the socket
-    client_socket.close()
+while True:
+    # check if there is data to receive
+    try:
+        data = client_socket.recv(1024)
+        if data != b'':
+            print("Received:", data.decode())
+
+            if data.decode() == "SHUTDOWN":
+                socket.close()
+                break
+    except socket.error as e:
+        print("Error: ", e)
+        break
+

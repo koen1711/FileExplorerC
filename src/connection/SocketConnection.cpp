@@ -6,7 +6,7 @@
 #include <sockpp/tcp_acceptor.h>
 #include <sockpp/tcp_socket.h>
 
-SocketConnection::SocketConnection() {
+SocketConnection::SocketConnection(FindFileCallback findFileCallback) : findFileCallback(std::move(findFileCallback)) {
 
 }
 
@@ -26,29 +26,32 @@ void SocketConnection::socketConnection() {
             // check if there is a client connection
             if (acceptor) {
                 // Get the connected socket
-                this->sock = acceptor.accept();
+                this->sock = new sockpp::tcp_socket(acceptor.accept());
 
                 // Get the address of the client
-                sockpp::inet_address client_addr = sock.peer_address();
+                sockpp::inet_address client_addr = sock->peer_address();
 
                 std::cout << "Received a connection from " << client_addr << std::endl;
 
-                // Send a message to the client
-                sock.write("Hello from TCP server!");
-
-                // Close the client connection
-                sock.close();
+                sock->write("Hello from TCP server!");
             }
         }
     } catch (const std::exception& ex) {
         std::cerr << "Error: " << ex.what() << std::endl;
     }
 
+    if (reinterpret_cast<unsigned long long int>(this->sock) != 0xffffffff00000000) {
+        this->sock->write("SHUTDOWN");
+        sock->close();
+    }
     WSACleanup();
+
 }
 
 void SocketConnection::refreshCallback(std::string directory) {
-    if (this->sock.is_open()) {
-        this->sock.write( "REFRESH," + directory);
+
+    if (reinterpret_cast<unsigned long long int>(this->sock) != 0xffffffff00000000) {
+        if (this->sock->is_open())
+            this->sock->write( "REFRESH," + directory);
     }
 }

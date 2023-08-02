@@ -15,7 +15,7 @@ add_subdirectory(libs/efsw)
 
 add_subdirectory(src)
 
-add_executable(FileExplorerCBackgroundService src/main.cpp src/connection/SocketConnection.cpp src/connection/SocketConnection.h src/search/FindFiles.cpp src/filesystem/CacheService.cpp src/filesystem/FileSystem.cpp src/filesystem/whereami.c src/filesystem/Events/FileSystemEvents.cpp src/search/search/Search.cpp)
+add_executable(FileExplorerCBackgroundService src/main.cpp src/connection/SocketConnection.cpp src/connection/SocketConnection.h src/search/FindFiles.cpp src/filesystem/CacheService.cpp src/filesystem/FileSystem.cpp src/filesystem/whereami.c src/filesystem/Events/FileSystemEvents.cpp src/search/search/Search.cpp src/App.cpp src/App.h)
 
 target_link_libraries(FileExplorerCBackgroundService sockpp)
 target_link_libraries(FileExplorerCBackgroundService rapidfuzz::rapidfuzz)
